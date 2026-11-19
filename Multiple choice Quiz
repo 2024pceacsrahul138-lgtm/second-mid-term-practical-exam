@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript Quiz</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            padding-top: 60px;
+        }
+
+        .quiz {
+            background: white;
+            width: 400px;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px gray;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .option {
+            display: block;
+            padding: 12px;
+            border: 1px solid #ccc;
+            margin: 10px 0;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button {
+            background: #333;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background: gray;
+            cursor: not-allowed;
+        }
+
+        #result {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="quiz">
+
+    <h2>JavaScript Quiz</h2>
+
+    <div id="quizBox">
+
+        <p id="questionNumber"></p>
+
+        <h3 id="question"></h3>
+
+        <div id="options"></div>
+
+        <button id="nextBtn" disabled onclick="nextQuestion()">
+            Next
+        </button>
+
+    </div>
+
+    <div id="result"></div>
+
+</div>
+
+<script>
+
+let questions = [
+
+    {
+        question: "Which keyword declares a constant variable?",
+        options: ["var", "let", "const", "static"],
+        answer: 2
+    },
+
+    {
+        question: "Which language is used for web development?",
+        options: ["JavaScript", "Python", "C", "Java"],
+        answer: 0
+    },
+
+    {
+        question: "Which symbol is used for comments in JavaScript?",
+        options: ["##", "//", "<!--", "**"],
+        answer: 1
+    },
+
+    {
+        question: "Which method prints output in console?",
+        options: ["print()", "write()", "console.log()", "display()"],
+        answer: 2
+    }
+
+];
+
+let currentQuestion = 0;
+let score = 0;
+
+function showQuestion() {
+
+    let q = questions[currentQuestion];
+
+    document.getElementById("questionNumber").innerText =
+        "Question " + (currentQuestion + 1) + " of " + questions.length;
+
+    document.getElementById("question").innerText = q.question;
+
+    let options = document.getElementById("options");
+
+    options.innerHTML = "";
+
+    q.options.forEach((option, index) => {
+
+        options.innerHTML += `
+            <label class="option">
+                <input type="radio" name="answer"
+                value="${index}" onchange="enableNext()">
+                ${option}
+            </label>
+        `;
+
+    });
+
+    let btn = document.getElementById("nextBtn");
+
+    btn.disabled = true;
+
+    if (currentQuestion === questions.length - 1) {
+        btn.innerText = "Finish";
+    } else {
+        btn.innerText = "Next";
+    }
+}
+
+function enableNext() {
+    document.getElementById("nextBtn").disabled = false;
+}
+
+function nextQuestion() {
+
+    let selected = document.querySelector(
+        'input[name="answer"]:checked'
+    );
+
+    if (selected === null) {
+        return;
+    }
+
+    if (Number(selected.value) === questions[currentQuestion].answer) {
+        score++;
+    }
+
+    currentQuestion++;
+
+    if (currentQuestion < questions.length) {
+        showQuestion();
+    } else {
+        showResult();
+    }
+}
+
+function showResult() {
+
+    document.getElementById("quizBox").style.display = "none";
+
+    let percentage = (score / questions.length) * 100;
+
+    let message;
+
+    if (percentage === 100) {
+        message = "Excellent work!";
+    } else if (percentage >= 50) {
+        message = "Good job!";
+    } else {
+        message = "Keep practicing!";
+    }
+
+    document.getElementById("result").innerHTML = `
+        <h2>Quiz Completed!</h2>
+
+        <h1>${score} / ${questions.length}</h1>
+
+        <h3>${percentage}%</h3>
+
+        <h3>${message}</h3>
+
+        <button onclick="restartQuiz()">Restart</button>
+    `;
+}
+
+function restartQuiz() {
+
+    currentQuestion = 0;
+    score = 0;
+
+    document.getElementById("quizBox").style.display = "block";
+
+    document.getElementById("result").innerHTML = "";
+
+    showQuestion();
+}
+
+showQuestion();
+
+</script>
+
+</body>
+</html>
+
+
